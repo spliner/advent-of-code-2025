@@ -11,6 +11,7 @@ type solver func(*bufio.Scanner) (string, error)
 
 var solvers = map[string]solver{
 	"1-1": day1.Part1,
+	"1-2": day1.Part2,
 }
 
 func main() {
