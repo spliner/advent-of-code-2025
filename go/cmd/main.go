@@ -2,6 +2,7 @@ package main
 
 import (
 	"aoc2025/pkg/day1"
+	"aoc2025/pkg/day2"
 	"bufio"
 	"fmt"
 	"os"
@@ -12,6 +13,8 @@ type solver func(*bufio.Scanner) (string, error)
 var solvers = map[string]solver{
 	"1-1": day1.Part1,
 	"1-2": day1.Part2,
+	"2-1": day2.Part1,
+	"2-2": day2.Part2,
 }
 
 func main() {
