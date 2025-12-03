@@ -30,7 +30,6 @@ func MaxJoltage(input string, n int) int64 {
 	index := 0
 	runes := []rune(input)
 	var result int64
-
 	for i := range n {
 		for j := index; j <= len(runes)-(n-i); j++ {
 			if runes[index] < runes[j] {
@@ -38,12 +37,13 @@ func MaxJoltage(input string, n int) int64 {
 			}
 		}
 
-		digit := int64(runes[index] - '0')
-		result += digit * pow(10, n-i-1)
-
+		digit = int(runes[index] - '0')
+		result += int64(d) * pow(10, n-i-1)
 		index++
 	}
 
+	for i, d := range digits {
+	}
 	return result
 }
 
