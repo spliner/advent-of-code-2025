@@ -37,3 +37,17 @@ func Contains[T comparable](t *testing.T, expected T, slice []T) {
 		t.Fatalf("expected slice to contain: %v", expected)
 	}
 }
+
+func True(t *testing.T, actual bool) {
+	t.Helper()
+	if !actual {
+		t.Fatalf("got: false, want true")
+	}
+}
+
+func False(t *testing.T, actual bool) {
+	t.Helper()
+	if actual {
+		t.Fatalf("got: true, want: false")
+	}
+}
