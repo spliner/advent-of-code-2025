@@ -1,8 +1,8 @@
-package day3_test
+package day03_test
 
 import (
 	"aoc2025/pkg/assert"
-	"aoc2025/pkg/day3"
+	"aoc2025/pkg/day03"
 	"bufio"
 	"fmt"
 	"strings"
@@ -60,7 +60,7 @@ func TestMaxJoltage(t *testing.T) {
 	for _, tc := range cases {
 		name := fmt.Sprintf("%s with %d digits should return %d", tc.input, tc.n, tc.expected)
 		t.Run(name, func(t *testing.T) {
-			joltage := day3.MaxJoltage(tc.input, tc.n)
+			joltage := day03.MaxJoltage(tc.input, tc.n)
 			assert.Equal(t, tc.expected, joltage)
 		})
 	}
@@ -73,7 +73,7 @@ func TestPart1(t *testing.T) {
 818181911112111`
 	scanner := bufio.NewScanner(strings.NewReader(input))
 
-	result, err := day3.Part1(scanner)
+	result, err := day03.Part1(scanner)
 
 	assert.Nil(t, err)
 	assert.Equal(t, "357", result)
@@ -86,7 +86,7 @@ func TestPart2(t *testing.T) {
 818181911112111`
 	scanner := bufio.NewScanner(strings.NewReader(input))
 
-	result, err := day3.Part2(scanner)
+	result, err := day03.Part2(scanner)
 
 	assert.Nil(t, err)
 	assert.Equal(t, "3121910778619", result)

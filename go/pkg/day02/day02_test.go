@@ -1,8 +1,8 @@
-package day2_test
+package day02_test
 
 import (
 	"aoc2025/pkg/assert"
-	"aoc2025/pkg/day2"
+	"aoc2025/pkg/day02"
 	"bufio"
 	"fmt"
 	"strings"
@@ -53,7 +53,7 @@ func TestIsSplitStringValid(t *testing.T) {
 	for _, tc := range cases {
 		name := fmt.Sprintf("IsIdValid for %s should be %v", tc.id, tc.isValid)
 		t.Run(name, func(t *testing.T) {
-			isValid := day2.IsSplitStringValid(tc.id)
+			isValid := day02.IsSplitStringValid(tc.id)
 			assert.Equal(t, tc.isValid, isValid)
 		})
 	}
@@ -63,7 +63,7 @@ func TestPart1(t *testing.T) {
 	line := "11-22,95-115,998-1012,1188511880-1188511890,222220-222224,1698522-1698528,446443-446449,38593856-38593862,565653-565659,824824821-824824827,2121212118-2121212124"
 	scanner := bufio.NewScanner(strings.NewReader(line))
 
-	result, err := day2.Part1(scanner)
+	result, err := day02.Part1(scanner)
 
 	assert.Nil(t, err)
 	assert.Equal(t, "1227775554", result)
@@ -103,7 +103,7 @@ func TestIsWindowValid(t *testing.T) {
 	for _, tc := range cases {
 		name := fmt.Sprintf("Foo for %s should be %v", tc.id, tc.isValid)
 		t.Run(name, func(t *testing.T) {
-			isValid := day2.IsWindowValid(tc.id)
+			isValid := day02.IsWindowValid(tc.id)
 			assert.Equal(t, tc.isValid, isValid)
 		})
 	}
@@ -113,7 +113,7 @@ func TestPart2(t *testing.T) {
 	line := "11-22,95-115,998-1012,1188511880-1188511890,222220-222224,1698522-1698528,446443-446449,38593856-38593862,565653-565659,824824821-824824827,2121212118-2121212124"
 	scanner := bufio.NewScanner(strings.NewReader(line))
 
-	result, err := day2.Part2(scanner)
+	result, err := day02.Part2(scanner)
 
 	assert.Nil(t, err)
 	assert.Equal(t, "4174379265", result)

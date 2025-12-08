@@ -1,8 +1,8 @@
-package day7_test
+package day07_test
 
 import (
 	"aoc2025/pkg/assert"
-	"aoc2025/pkg/day7"
+	"aoc2025/pkg/day07"
 	"bufio"
 	"strings"
 	"testing"
@@ -27,7 +27,7 @@ func TestPart1(t *testing.T) {
 ...............`
 	scanner := bufio.NewScanner(strings.NewReader(input))
 
-	result, err := day7.Part1(scanner)
+	result, err := day07.Part1(scanner)
 
 	assert.Nil(t, err)
 	assert.Equal(t, "21", result)
@@ -52,7 +52,7 @@ func TestPart2(t *testing.T) {
 ...............`
 	scanner := bufio.NewScanner(strings.NewReader(input))
 
-	result, err := day7.Part2(scanner)
+	result, err := day07.Part2(scanner)
 
 	assert.Nil(t, err)
 	assert.Equal(t, "40", result)

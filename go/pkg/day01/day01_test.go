@@ -1,8 +1,8 @@
-package day1_test
+package day01_test
 
 import (
 	"aoc2025/pkg/assert"
-	"aoc2025/pkg/day1"
+	"aoc2025/pkg/day01"
 	"fmt"
 	"testing"
 )
@@ -53,7 +53,7 @@ func TestTurnLeft(t *testing.T) {
 	for _, tc := range testCases {
 		name := fmt.Sprintf("Turning %d times left from %d should stop at %d", tc.times, tc.currentPosition, tc.expectedPosition)
 		t.Run(name, func(t *testing.T) {
-			dial := day1.Dial{CurrentPosition: tc.currentPosition}
+			dial := day01.Dial{CurrentPosition: tc.currentPosition}
 			dial.TurnLeft(tc.times)
 			assert.Equal(t, tc.expectedPosition, dial.CurrentPosition)
 		})
@@ -106,7 +106,7 @@ func TestTurnRight(t *testing.T) {
 	for _, tc := range testCases {
 		name := fmt.Sprintf("Turning %d times right from %d should stop at %d", tc.times, tc.currentPosition, tc.expected)
 		t.Run(name, func(t *testing.T) {
-			dial := day1.Dial{CurrentPosition: tc.currentPosition}
+			dial := day01.Dial{CurrentPosition: tc.currentPosition}
 			dial.TurnRight(tc.times)
 			assert.Equal(t, tc.expected, dial.CurrentPosition)
 		})
@@ -114,7 +114,7 @@ func TestTurnRight(t *testing.T) {
 }
 
 func TestStoppedAtZeroCount(t *testing.T) {
-	dial := day1.Dial{CurrentPosition: 50}
+	dial := day01.Dial{CurrentPosition: 50}
 
 	// 0
 	dial.TurnRight(10)
@@ -134,7 +134,7 @@ func TestStoppedAtZeroCount(t *testing.T) {
 }
 
 func TestDay1(t *testing.T) {
-	dial := day1.Dial{CurrentPosition: 50}
+	dial := day01.Dial{CurrentPosition: 50}
 
 	dial.TurnLeft(68)
 	assert.Equal(t, 82, dial.CurrentPosition)

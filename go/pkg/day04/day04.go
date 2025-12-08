@@ -1,4 +1,4 @@
-package day4
+package day04
 
 import (
 	"aoc2025/pkg/set"
