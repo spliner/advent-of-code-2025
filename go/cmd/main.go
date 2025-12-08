@@ -7,6 +7,7 @@ import (
 	"aoc2025/pkg/day4"
 	"aoc2025/pkg/day5"
 	"aoc2025/pkg/day6"
+	"aoc2025/pkg/day7"
 	"bufio"
 	"fmt"
 	"os"
@@ -27,6 +28,8 @@ var solvers = map[string]solver{
 	"5-2": day5.Part2,
 	"6-1": day6.Part1,
 	"6-2": day6.Part2,
+	"7-1": day7.Part1,
+	"7-2": day7.Part2,
 }
 
 func main() {
