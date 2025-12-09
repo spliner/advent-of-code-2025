@@ -1,8 +1,11 @@
 package set
 
 import (
+	"fmt"
 	"iter"
 	"maps"
+	"strconv"
+	"strings"
 )
 
 var mark = struct{}{}
@@ -16,6 +19,21 @@ func New[T comparable]() *Set[T] {
 	return &Set[T]{
 		items: items,
 	}
+}
+
+func Union[T comparable](s, other *Set[T]) *Set[T] {
+	union := New[T]()
+	if s != nil {
+		for k := range s.items {
+			union.Add(k)
+		}
+	}
+	if other != nil {
+		for k := range other.items {
+			union.Add(k)
+		}
+	}
+	return union
 }
 
 func (s *Set[T]) Contains(item T) bool {
@@ -44,4 +62,20 @@ func (s *Set[T]) Remove(item T) bool {
 
 func (s *Set[T]) Items() iter.Seq[T] {
 	return maps.Keys(s.items)
+}
+
+func (s *Set[T]) Len() int {
+	return len(s.items)
+}
+
+func (s *Set[T]) String() string {
+	var sb strings.Builder
+	strLen := strconv.Itoa(len(s.items))
+	sb.WriteString("(" + strLen + ")")
+	sb.WriteString("[")
+	for k := range s.items {
+		sb.WriteString(fmt.Sprint(k))
+	}
+	sb.WriteString("]")
+	return sb.String()
 }
