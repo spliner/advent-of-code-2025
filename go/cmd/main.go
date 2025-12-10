@@ -10,6 +10,7 @@ import (
 	"aoc2025/pkg/day07"
 	"aoc2025/pkg/day08"
 	"aoc2025/pkg/day09"
+	"aoc2025/pkg/day10"
 	"bufio"
 	"fmt"
 	"os"
@@ -18,24 +19,25 @@ import (
 type solver func(*bufio.Scanner) (string, error)
 
 var solvers = map[string]solver{
-	"1-1": day01.Part1,
-	"1-2": day01.Part2,
-	"2-1": day02.Part1,
-	"2-2": day02.Part2,
-	"3-1": day03.Part1,
-	"3-2": day03.Part2,
-	"4-1": day04.Part1,
-	"4-2": day04.Part2,
-	"5-1": day05.Part1,
-	"5-2": day05.Part2,
-	"6-1": day06.Part1,
-	"6-2": day06.Part2,
-	"7-1": day07.Part1,
-	"7-2": day07.Part2,
-	"8-1": day08.Part1,
-	"8-2": day08.Part2,
-	"9-1": day09.Part1,
-	"9-2": day09.Part2,
+	"1-1":  day01.Part1,
+	"1-2":  day01.Part2,
+	"2-1":  day02.Part1,
+	"2-2":  day02.Part2,
+	"3-1":  day03.Part1,
+	"3-2":  day03.Part2,
+	"4-1":  day04.Part1,
+	"4-2":  day04.Part2,
+	"5-1":  day05.Part1,
+	"5-2":  day05.Part2,
+	"6-1":  day06.Part1,
+	"6-2":  day06.Part2,
+	"7-1":  day07.Part1,
+	"7-2":  day07.Part2,
+	"8-1":  day08.Part1,
+	"8-2":  day08.Part2,
+	"9-1":  day09.Part1,
+	"9-2":  day09.Part2,
+	"10-1": day10.Part1,
 }
 
 func main() {
