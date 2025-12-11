@@ -1,7 +1,7 @@
 const std = @import("std");
 const day01 = @import("day01");
 
-const ArgParseError = error{MissingArgs};
+const ArgParseError = error{ MissingArgs, InvalidDay, InvalidPart };
 
 pub fn main() !void {
     var arena = std.heap.ArenaAllocator.init(std.heap.page_allocator);
@@ -10,18 +10,34 @@ pub fn main() !void {
     const allocator = arena.allocator();
 
     const args = try std.process.argsAlloc(allocator);
-    if (args.len < 2) {
+    if (args.len < 4) {
+        std.debug.print("Usage: {s} <day> <part> <input_file>\n", .{args[0]});
         return ArgParseError.MissingArgs;
     }
 
-    const filepath = args[1];
+    const day = try std.fmt.parseInt(u32, args[1], 10);
+    const part = try std.fmt.parseInt(u32, args[2], 10);
+    const filepath = args[3];
+
+    if (part != 1 and part != 2) {
+        std.debug.print("Part must be 1 or 2\n", .{});
+        return ArgParseError.InvalidPart;
+    }
+
     const file = try std.fs.cwd().openFile(filepath, .{ .mode = .read_only });
     var file_buffer: [1024]u8 = undefined;
     var file_reader = file.reader(&file_buffer);
     const reader = &file_reader.interface;
 
-    _ = try day01.part1(allocator, reader);
-    _ = try day01.part2(allocator, reader);
+    const answer = switch (day) {
+        1 => if (part == 1) try day01.part1(allocator, reader) else try day01.part2(allocator, reader),
+        else => {
+            std.debug.print("Day {d} not implemented yet\n", .{day});
+            return ArgParseError.InvalidDay;
+        },
+    };
+
+    std.debug.print("Day {d} Part {d}: {f}\n", .{ day, part, answer });
 }
 
 test "simple test" {

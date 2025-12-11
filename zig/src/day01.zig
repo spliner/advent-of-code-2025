@@ -1,4 +1,5 @@
 const std = @import("std");
+const day = @import("day.zig");
 
 const Dial = struct {
     position: i32,
@@ -58,7 +59,7 @@ const Dial = struct {
     }
 };
 
-pub fn part1(_: std.mem.Allocator, reader: *std.Io.Reader) !i32 {
+pub fn part1(_: std.mem.Allocator, reader: *std.Io.Reader) !day.Answer {
     var d = Dial.init(50);
 
     while (try reader.takeDelimiter('\n')) |line| {
@@ -72,10 +73,10 @@ pub fn part1(_: std.mem.Allocator, reader: *std.Io.Reader) !i32 {
         }
     }
 
-    return d.stopped_zero_count;
+    return day.Answer{ .int = d.stopped_zero_count };
 }
 
-pub fn part2(_: std.mem.Allocator, reader: *std.Io.Reader) !i32 {
+pub fn part2(_: std.mem.Allocator, reader: *std.Io.Reader) !day.Answer {
     var d = Dial.init(50);
 
     while (try reader.takeDelimiter('\n')) |line| {
@@ -89,7 +90,7 @@ pub fn part2(_: std.mem.Allocator, reader: *std.Io.Reader) !i32 {
         }
     }
 
-    return d.passed_zero_count;
+    return day.Answer{ .int = d.passed_zero_count };
 }
 
 test {
@@ -152,7 +153,7 @@ test "part1" {
 
     const result = try part1(std.testing.allocator, &reader.interface);
 
-    try std.testing.expectEqual(3, result);
+    try std.testing.expectEqual(day.Answer{ .int = 3 }, result);
 }
 
 test "part2" {
@@ -175,5 +176,5 @@ test "part2" {
 
     const result = try part2(std.testing.allocator, &reader.interface);
 
-    try std.testing.expectEqual(6, result);
+    try std.testing.expectEqual(day.Answer{ .int = 6 }, result);
 }
