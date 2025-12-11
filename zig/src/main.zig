@@ -20,8 +20,8 @@ pub fn main() !void {
     var file_reader = file.reader(&file_buffer);
     const reader = &file_reader.interface;
 
-    const result = try day01.part1(allocator, reader);
-    std.debug.print("result: {d}\n", .{result});
+    _ = try day01.part1(allocator, reader);
+    _ = try day01.part2(allocator, reader);
 }
 
 test "simple test" {

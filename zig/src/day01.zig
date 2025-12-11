@@ -2,57 +2,59 @@ const std = @import("std");
 
 const Dial = struct {
     position: i32,
-    stoppedAtZeroCount: i32,
-    passedThroughZeroCount: i32,
+    stopped_zero_count: i32,
+    passed_zero_count: i32,
 
     pub fn init(position: i32) Dial {
         return .{
             .position = position,
-            .stoppedAtZeroCount = 0,
-            .passedThroughZeroCount = 0,
+            .stopped_zero_count = 0,
+            .passed_zero_count = 0,
         };
     }
 
     pub fn turnLeft(self: *Dial, times: i32) void {
-        const fullTurns = @divTrunc(times, 100);
-        self.passedThroughZeroCount += fullTurns;
+        const full_turns = @divTrunc(times, 100);
+        self.passed_zero_count += full_turns;
 
-        const effectiveTimes = @mod(times, 100);
-        var newPosition = self.position - effectiveTimes;
-        var passedThroughZero = false;
-        if (newPosition < 0) {
-            newPosition = 100 + newPosition;
-            passedThroughZero = self.position != 0;
+        const effective_times = @mod(times, 100);
+        var new_position = self.position - effective_times;
+        var passed_through_zero = false;
+        if (new_position < 0) {
+            new_position = 100 + new_position;
+            passed_through_zero = self.position != 0;
         }
 
-        if (newPosition == 0) {
-            self.stoppedAtZeroCount += 1;
-        } else if (passedThroughZero) {
-            self.passedThroughZeroCount += 1;
+        if (new_position == 0) {
+            self.stopped_zero_count += 1;
+            self.passed_zero_count += 1;
+        } else if (passed_through_zero) {
+            self.passed_zero_count += 1;
         }
 
-        self.position = newPosition;
+        self.position = new_position;
     }
 
     pub fn turnRight(self: *Dial, times: i32) void {
-        const fullTurns = @divTrunc(times, 100);
-        self.passedThroughZeroCount += fullTurns;
+        const full_turns = @divTrunc(times, 100);
+        self.passed_zero_count += full_turns;
 
-        const effectiveTimes = @mod(times, 100);
-        var newPosition = self.position + effectiveTimes;
-        var passedThroughZero = false;
-        if (newPosition > 99) {
-            newPosition -= 100;
-            passedThroughZero = true;
+        const effective_times = @mod(times, 100);
+        var new_position = self.position + effective_times;
+        var passed_through_zero = false;
+        if (new_position > 99) {
+            new_position -= 100;
+            passed_through_zero = true;
         }
 
-        if (newPosition == 0) {
-            self.stoppedAtZeroCount += 1;
-        } else if (passedThroughZero) {
-            self.passedThroughZeroCount += 1;
+        if (new_position == 0) {
+            self.stopped_zero_count += 1;
+            self.passed_zero_count += 1;
+        } else if (passed_through_zero) {
+            self.passed_zero_count += 1;
         }
 
-        self.position = newPosition;
+        self.position = new_position;
     }
 };
 
@@ -62,8 +64,7 @@ pub fn part1(_: std.mem.Allocator, reader: *std.Io.Reader) !i32 {
     while (try reader.takeDelimiter('\n')) |line| {
         const trim = std.mem.trim(u8, line, " \r\t");
         const direction = trim[0];
-        const rawTimes = trim[1..];
-        const times = try std.fmt.parseInt(i32, rawTimes, 10);
+        const times = try std.fmt.parseInt(i32, trim[1..], 10);
         if (direction == 'L') {
             d.turnLeft(times);
         } else if (direction == 'R') {
@@ -71,7 +72,24 @@ pub fn part1(_: std.mem.Allocator, reader: *std.Io.Reader) !i32 {
         }
     }
 
-    return d.stoppedAtZeroCount;
+    return d.stopped_zero_count;
+}
+
+pub fn part2(_: std.mem.Allocator, reader: *std.Io.Reader) !i32 {
+    var d = Dial.init(50);
+
+    while (try reader.takeDelimiter('\n')) |line| {
+        const trim = std.mem.trim(u8, line, " \r\t");
+        const direction = trim[0];
+        const times = try std.fmt.parseInt(i32, trim[1..], 10);
+        if (direction == 'L') {
+            d.turnLeft(times);
+        } else if (direction == 'R') {
+            d.turnRight(times);
+        }
+    }
+
+    return d.passed_zero_count;
 }
 
 test {
@@ -115,8 +133,6 @@ test "turnRight" {
 }
 
 test "part1" {
-    const allocator = std.testing.allocator;
-
     const input =
         \\L68
         \\L30
@@ -129,11 +145,35 @@ test "part1" {
         \\R14
         \\L82
     ;
-
     var reader_buf: [1024]u8 = undefined;
     var reader = std.testing.Reader.init(&reader_buf, &.{
         .{ .buffer = input },
     });
-    const result = try part1(allocator, &reader.interface);
+
+    const result = try part1(std.testing.allocator, &reader.interface);
+
     try std.testing.expectEqual(3, result);
+}
+
+test "part2" {
+    const input =
+        \\L68
+        \\L30
+        \\R48
+        \\L5
+        \\R60
+        \\L55
+        \\L1
+        \\L99
+        \\R14
+        \\L82
+    ;
+    var reader_buf: [1024]u8 = undefined;
+    var reader = std.testing.Reader.init(&reader_buf, &.{
+        .{ .buffer = input },
+    });
+
+    const result = try part2(std.testing.allocator, &reader.interface);
+
+    try std.testing.expectEqual(6, result);
 }
