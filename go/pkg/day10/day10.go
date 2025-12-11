@@ -134,3 +134,7 @@ func equal(state []bool, target []bool) bool {
 
 	return true
 }
+
+func Part2(scanner *bufio.Scanner) (string, error) {
+	return "lol", nil
+}
