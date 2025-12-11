@@ -1,7 +1,4 @@
 const std = @import("std");
-
-const zig = @import("zig");
-
 const day01 = @import("day01");
 
 const ArgParseError = error{MissingArgs};
@@ -23,10 +20,8 @@ pub fn main() !void {
     var file_reader = file.reader(&file_buffer);
     const reader = &file_reader.interface;
 
-    try day01.part1(allocator, reader);
-
-    // Prints to stderr, ignoring potential errors.
-    try zig.bufferedPrint();
+    const result = try day01.part1(allocator, reader);
+    std.debug.print("result: {d}\n", .{result});
 }
 
 test "simple test" {
