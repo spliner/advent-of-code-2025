@@ -21,17 +21,26 @@ pub fn build(b: *std.Build) void {
     // target and optimize options) will be listed when running `zig build --help`
     // in this directory.
 
-    // Setup modules for each Advent of Code day
-    // Add new days here as you complete them
+    // Shared day module for common types
+    const day = b.addModule("day", .{
+        .root_source_file = b.path("src/day.zig"),
+        .target = target,
+    });
+
     const day01 = b.addModule("day01", .{
         .root_source_file = b.path("src/day01.zig"),
         .target = target,
+        .imports = &.{
+            .{ .name = "day.zig", .module = day },
+        },
     });
-    // Example for adding more days:
-    // const day02 = b.addModule("day02", .{
-    //     .root_source_file = b.path("src/day02.zig"),
-    //     .target = target,
-    // });
+    const day02 = b.addModule("day02", .{
+        .root_source_file = b.path("src/day02.zig"),
+        .target = target,
+        .imports = &.{
+            .{ .name = "day.zig", .module = day },
+        },
+    });
 
     // Main executable for running Advent of Code solutions
     const exe = b.addExecutable(.{
@@ -43,7 +52,7 @@ pub fn build(b: *std.Build) void {
             // Import day modules - add new days here
             .imports = &.{
                 .{ .name = "day01", .module = day01 },
-                // .{ .name = "day02", .module = day02 },
+                .{ .name = "day02", .module = day02 },
             },
         }),
     });
@@ -86,21 +95,19 @@ pub fn build(b: *std.Build) void {
     });
     const run_exe_tests = b.addRunArtifact(exe_tests);
 
-    // Day 01 tests
     const day01_tests = b.addTest(.{
         .root_module = day01,
     });
     const run_day01_tests = b.addRunArtifact(day01_tests);
+    const day02_tests = b.addTest(.{
+        .root_module = day02,
+    });
+    const run_day02_tests = b.addRunArtifact(day02_tests);
 
-    // Add more day tests here:
-    // const day02_tests = b.addTest(.{ .root_module = day02 });
-    // const run_day02_tests = b.addRunArtifact(day02_tests);
-
-    // Test step runs all tests
     const test_step = b.step("test", "Run all tests");
     test_step.dependOn(&run_exe_tests.step);
     test_step.dependOn(&run_day01_tests.step);
-    // test_step.dependOn(&run_day02_tests.step);
+    test_step.dependOn(&run_day02_tests.step);
 
     // Just like flags, top level steps are also listed in the `--help` menu.
     //
