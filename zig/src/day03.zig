@@ -44,8 +44,39 @@ pub fn part1(_: std.mem.Allocator, reader: *std.Io.Reader) !day.Answer {
     return day.Answer{ .int = @intCast(sum) };
 }
 
-pub fn part2(_: std.mem.Allocator, _: *std.Io.Reader) !day.Answer {
-    return day.Answer{ .int = 0 };
+const InvalidNumberOfDigitsError = error{};
+
+pub fn part2(_: std.mem.Allocator, reader: *std.Io.Reader) !day.Answer {
+    var sum: usize = 0;
+    while (try reader.takeDelimiter('\n')) |line| {
+        const trimmed = std.mem.trim(u8, line, " \r\n\t");
+        const max_joltage = maxJoltage(trimmed, 12);
+        sum += max_joltage;
+    }
+
+    return day.Answer{ .int = @intCast(sum) };
+}
+
+fn maxJoltage(input: []const u8, n: usize) usize {
+    var result: usize = 0;
+
+    var index: usize = 0;
+    var i: usize = 0;
+    while (i < n) : (i += 1) {
+        var j = index;
+        while (j <= input.len - (n - i)) : (j += 1) {
+            if (input[index] < input[j]) {
+                index = j;
+            }
+        }
+
+        const digit = input[index] - '0';
+        result += digit * std.math.pow(usize, 10, n - i - 1);
+
+        index += 1;
+    }
+
+    return result;
 }
 
 test "part1" {
@@ -64,4 +95,22 @@ test "part1" {
     const result = try part1(std.testing.allocator, &reader.interface);
 
     try std.testing.expectEqual(day.Answer{ .int = 357 }, result);
+}
+
+test "part2" {
+    const input =
+        \\987654321111111
+        \\811111111111119
+        \\234234234234278
+        \\818181911112111
+    ;
+
+    var reader_buf: [1024]u8 = undefined;
+    var reader = std.testing.Reader.init(&reader_buf, &.{
+        .{ .buffer = input },
+    });
+
+    const result = try part2(std.testing.allocator, &reader.interface);
+
+    try std.testing.expectEqual(day.Answer{ .int = 3121910778619 }, result);
 }
