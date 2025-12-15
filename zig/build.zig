@@ -48,6 +48,13 @@ pub fn build(b: *std.Build) void {
             .{ .name = "day.zig", .module = day },
         },
     });
+    const day04 = b.addModule("day04", .{
+        .root_source_file = b.path("src/day04.zig"),
+        .target = target,
+        .imports = &.{
+            .{ .name = "day.zig", .module = day },
+        },
+    });
 
     // Main executable for running Advent of Code solutions
     const exe = b.addExecutable(.{
@@ -61,6 +68,7 @@ pub fn build(b: *std.Build) void {
                 .{ .name = "day01", .module = day01 },
                 .{ .name = "day02", .module = day02 },
                 .{ .name = "day03", .module = day03 },
+                .{ .name = "day04", .module = day04 },
             },
         }),
     });
@@ -115,12 +123,17 @@ pub fn build(b: *std.Build) void {
         .root_module = day03,
     });
     const run_day03_tests = b.addRunArtifact(day03_tests);
+    const day04_tests = b.addTest(.{
+        .root_module = day04,
+    });
+    const run_day04_tests = b.addRunArtifact(day04_tests);
 
     const test_step = b.step("test", "Run all tests");
     test_step.dependOn(&run_exe_tests.step);
     test_step.dependOn(&run_day01_tests.step);
     test_step.dependOn(&run_day02_tests.step);
     test_step.dependOn(&run_day03_tests.step);
+    test_step.dependOn(&run_day04_tests.step);
 
     // Just like flags, top level steps are also listed in the `--help` menu.
     //
