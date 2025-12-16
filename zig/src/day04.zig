@@ -1,22 +1,57 @@
 const std = @import("std");
 const day = @import("day.zig");
 
-fn countDigits(n: u512) u512 {
-    if (n == 0) {
-        return 1;
+const Point = struct {
+    x: isize,
+    y: isize,
+
+    fn adjacent(self: *Point) [8]Point {
+        const points: [8]Point = .{
+            .{ .x = self.x - 1, .y = self.y - 1 }, // Toself.left
+            .{ .x = self.x, .y = self.y - 1 }, // Top
+            .{ .x = self.x + 1, .y = self.y - 1 }, // Toself.right
+            .{ .x = self.x - 1, .y = self.y }, // Left
+            .{ .x = self.x + 1, .y = self.y }, // Right
+            .{ .x = self.x + 1, .y = self.y + 1 }, // Bottom right
+            .{ .x = self.x, .y = self.y + 1 }, // Bottom
+            .{ .x = self.x - 1, .y = self.y + 1 }, // Bottom left
+        };
+        return points;
+    }
+};
+
+pub fn part1(allocator: std.mem.Allocator, reader: *std.Io.Reader) !day.Answer {
+    var points = std.AutoHashMap(Point, void).init(allocator);
+    defer points.deinit();
+
+    var y: isize = 0;
+    while (try reader.takeDelimiter('\n')) |line| {
+        const trimmed = std.mem.trim(u8, line, " \r\t");
+        for (trimmed, 0..) |c, x| {
+            if (c == '@') {
+                const p = Point{ .x = @as(isize, @intCast(x)), .y = y };
+                try points.put(p, {});
+            }
+        }
+        y += 1;
     }
 
-    var num_digits: u512 = 0;
-    var current = n;
-    while (current > 0) : (current /= 10) {
-        num_digits += 1;
+    var total: isize = 0;
+    var it = points.keyIterator();
+    while (it.next()) |p| {
+        const adj = p.adjacent();
+        var count: usize = 0;
+        for (adj) |a| {
+            if (points.contains(a)) {
+                count += 1;
+            }
+        }
+        if (count < 4) {
+            total += 1;
+        }
     }
 
-    return num_digits;
-}
-
-pub fn part1(_: std.mem.Allocator, _: *std.Io.Reader) !day.Answer {
-    return day.Answer{ .int = 0 };
+    return day.Answer{ .int = total };
 }
 
 pub fn part2(_: std.mem.Allocator, _: *std.Io.Reader) !day.Answer {
