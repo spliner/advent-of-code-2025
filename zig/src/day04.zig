@@ -21,7 +21,7 @@ const Point = struct {
 };
 
 pub fn part1(allocator: std.mem.Allocator, reader: *std.Io.Reader) !day.Answer {
-    var points = std.AutoHashMap(Point, void).init(allocator);
+    var points = try parsePoints(allocator, reader);
     defer points.deinit();
 
     var y: isize = 0;
@@ -54,8 +54,59 @@ pub fn part1(allocator: std.mem.Allocator, reader: *std.Io.Reader) !day.Answer {
     return day.Answer{ .int = total };
 }
 
-pub fn part2(_: std.mem.Allocator, _: *std.Io.Reader) !day.Answer {
-    return day.Answer{ .int = 0 };
+fn parsePoints(allocator: std.mem.Allocator, reader: *std.Io.Reader) !std.AutoHashMap(Point, void) {
+    var points = std.AutoHashMap(Point, void).init(allocator);
+
+    var y: isize = 0;
+    while (try reader.takeDelimiter('\n')) |line| {
+        const trimmed = std.mem.trim(u8, line, " \r\t");
+        for (trimmed, 0..) |c, x| {
+            if (c == '@') {
+                const p = Point{ .x = @as(isize, @intCast(x)), .y = y };
+                try points.put(p, {});
+            }
+        }
+        y += 1;
+    }
+
+    return points;
+}
+
+pub fn part2(allocator: std.mem.Allocator, reader: *std.Io.Reader) !day.Answer {
+    var points = try parsePoints(allocator, reader);
+    defer points.deinit();
+
+    var total: usize = 0;
+    while (true) {
+        var to_remove: std.ArrayList(Point) = .empty;
+        defer to_remove.deinit(allocator);
+
+        var it = points.keyIterator();
+        while (it.next()) |p| {
+            const adj = p.adjacent();
+            var count: usize = 0;
+            for (adj) |a| {
+                if (points.contains(a)) {
+                    count += 1;
+                }
+            }
+
+            if (count < 4) {
+                try to_remove.append(allocator, p.*);
+            }
+        }
+
+        if (to_remove.items.len == 0) {
+            break;
+        }
+
+        for (to_remove.items) |p| {
+            _ = points.remove(p);
+            total += 1;
+        }
+    }
+
+    return day.Answer{ .int = @intCast(total) };
 }
 
 test "part1" {
@@ -103,5 +154,5 @@ test "part2" {
 
     const result = try part2(std.testing.allocator, &reader.interface);
 
-    try std.testing.expectEqual(day.Answer{ .int = 8310 }, result);
+    try std.testing.expectEqual(day.Answer{ .int = 43 }, result);
 }
