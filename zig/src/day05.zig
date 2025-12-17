@@ -8,6 +8,10 @@ const Range = struct {
     fn inRange(self: Range, item: usize) bool {
         return self.start <= item and item <= self.end;
     }
+
+    fn cmp(_: void, a: Range, b: Range) bool {
+        return a.start < b.start;
+    }
 };
 
 pub fn part1(allocator: std.mem.Allocator, reader: *std.Io.Reader) !day.Answer {
@@ -28,8 +32,24 @@ pub fn part1(allocator: std.mem.Allocator, reader: *std.Io.Reader) !day.Answer {
     return day.Answer{ .int = @intCast(count) };
 }
 
-pub fn part2(_: std.mem.Allocator, _: *std.Io.Reader) !day.Answer {
-    return day.Answer{ .int = 0 };
+pub fn part2(allocator: std.mem.Allocator, reader: *std.Io.Reader) !day.Answer {
+    var ranges = try parseRanges(allocator, reader);
+    defer ranges.deinit(allocator);
+    std.mem.sort(Range, ranges.items, {}, Range.cmp);
+
+    var sum: usize = 0;
+    var previous: ?Range = null;
+    for (ranges.items) |r| {
+        const previousEnd = if (previous) |p| p.end else 0;
+
+        const start = if (r.start > previousEnd) r.start else previousEnd + 1;
+        if (start <= r.end) {
+            sum += r.end - start + 1;
+            previous = r;
+        }
+    }
+
+    return day.Answer{ .int = @intCast(sum) };
 }
 
 fn parseRanges(allocator: std.mem.Allocator, reader: *std.Io.Reader) !std.ArrayList(Range) {
