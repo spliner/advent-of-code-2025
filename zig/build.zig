@@ -76,6 +76,7 @@ pub fn build(b: *std.Build) void {
                 .{ .name = "day02", .module = day02 },
                 .{ .name = "day03", .module = day03 },
                 .{ .name = "day04", .module = day04 },
+                .{ .name = "day05", .module = day05 },
             },
         }),
     });

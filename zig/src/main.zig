@@ -3,6 +3,7 @@ const day01 = @import("day01");
 const day02 = @import("day02");
 const day03 = @import("day03");
 const day04 = @import("day04");
+const day05 = @import("day05");
 
 const ArgParseError = error{ MissingArgs, InvalidDay, InvalidPart };
 
@@ -37,6 +38,7 @@ pub fn main() !void {
         2 => if (part == 1) try day02.part1(allocator, reader) else try day02.part2(allocator, reader),
         3 => if (part == 1) try day03.part1(allocator, reader) else try day03.part2(allocator, reader),
         4 => if (part == 1) try day04.part1(allocator, reader) else try day04.part2(allocator, reader),
+        5 => if (part == 1) try day05.part1(allocator, reader) else try day05.part2(allocator, reader),
         else => {
             std.debug.print("Day {d} not implemented yet\n", .{day});
             return ArgParseError.InvalidDay;
