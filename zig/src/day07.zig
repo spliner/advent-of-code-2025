@@ -46,10 +46,29 @@ pub fn part1(allocator: std.mem.Allocator, reader: *std.Io.Reader) !day.Answer {
     var it = LineIterator.init(allocator, reader);
     defer it.deinit();
 
-    while (try it.next()) |l| {
-        std.debug.print("{s}\n", .{l});
+    const first_line = try it.next() orelse unreachable;
+
+    var beams = try std.ArrayList(usize).initCapacity(allocator, first_line.len);
+    defer beams.deinit(allocator);
+
+    for (first_line) |c| {
+        const val: usize = if (c == 'S') 1 else 0;
+        try beams.append(allocator, val);
     }
-    return day.Answer{ .int = 0 };
+
+    var splits: usize = 0;
+    while (try it.next()) |line| {
+        for (beams.items, 0..) |val, i| {
+            if (val != 0 and line[i] == '^') {
+                splits += 1;
+                beams.items[i - 1] += val;
+                beams.items[i + 1] += val;
+                beams.items[i] = 0;
+            }
+        }
+    }
+
+    return day.Answer{ .int = @intCast(splits) };
 }
 
 pub fn part2(_: std.mem.Allocator, _: *std.Io.Reader) !day.Answer {
@@ -83,7 +102,7 @@ test "part1" {
 
     const result = try part1(std.testing.allocator, &reader.interface);
 
-    try std.testing.expectEqual(day.Answer{ .int = 0 }, result);
+    try std.testing.expectEqual(day.Answer{ .int = 21 }, result);
 }
 
 test "part2" {
