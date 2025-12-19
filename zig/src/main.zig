@@ -30,8 +30,10 @@ pub fn main() !void {
     }
 
     const file = try std.fs.cwd().openFile(filepath, .{ .mode = .read_only });
-    var file_buffer: [1024]u8 = undefined;
-    var file_reader = file.reader(&file_buffer);
+    defer file.close();
+
+    var buffer: [1024]u8 = undefined;
+    var file_reader = file.reader(&buffer);
     const reader = &file_reader.interface;
 
     const answer = switch (day) {
