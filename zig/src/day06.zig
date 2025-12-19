@@ -75,8 +75,100 @@ pub fn part1(allocator: std.mem.Allocator, reader: *std.Io.Reader) !day.Answer {
     return day.Answer{ .int = sum };
 }
 
-pub fn part2(_: std.mem.Allocator, _: *std.Io.Reader) !day.Answer {
-    return day.Answer{ .int = 0 };
+pub fn part2(allocator: std.mem.Allocator, reader: *std.Io.Reader) !day.Answer {
+    var lines: std.ArrayList([]u8) = .empty;
+    defer lines.deinit(allocator);
+    defer for (lines.items) |l| {
+        allocator.free(l);
+    };
+
+    var line_writer = std.io.Writer.Allocating.init(allocator);
+    defer line_writer.deinit();
+
+    while (true) {
+        const has_more = blk: {
+            _ = reader.streamDelimiter(&line_writer.writer, '\n') catch |err| switch (err) {
+                error.EndOfStream => break :blk false,
+                else => return err,
+            };
+            break :blk true;
+        };
+        const line = line_writer.written();
+        if (line.len == 0) {
+            break;
+        }
+
+        const copied = try allocator.alloc(u8, line.len);
+        std.mem.copyForwards(u8, copied, line);
+        try lines.append(allocator, copied);
+
+        line_writer.clearRetainingCapacity();
+        if (!has_more) {
+            break;
+        }
+        reader.toss(1); // Skip delimiter
+    }
+
+    const last_line = lines.items[lines.items.len - 1];
+    var start: usize = 0;
+    var limit = findLimit(last_line, start);
+    var sum: usize = 0;
+    while (start <= last_line.len) {
+        var numbers: std.ArrayList(usize) = .empty;
+        defer numbers.deinit(allocator);
+
+        var col: usize = limit;
+        while (col >= start) {
+            var number: usize = 0;
+            var row: usize = 0;
+            while (row < lines.items.len - 1) : (row += 1) {
+                const n = lines.items[row][col];
+                if (n != ' ') {
+                    number = number * 10 + (n - '0');
+                }
+            }
+
+            try numbers.append(allocator, number);
+
+            if (col == 0) {
+                break;
+            }
+            col -= 1;
+        }
+
+        const operator = last_line[start];
+        const func: *const fn (acc: usize, curr: usize) usize, var acc: usize =
+            if (operator == '+') .{ sumNumbers, 0 } else .{ multiplyNumbers, 1 };
+        for (numbers.items) |n| {
+            acc = func(acc, n);
+        }
+        sum += acc;
+
+        start = limit + 2;
+        limit = findLimit(last_line, start);
+    }
+
+    return day.Answer{ .int = @intCast(sum) };
+}
+
+fn sumNumbers(x: usize, y: usize) usize {
+    return x + y;
+}
+
+fn multiplyNumbers(x: usize, y: usize) usize {
+    return x * y;
+}
+
+fn findLimit(line: []u8, start: usize) usize {
+    var i = start + 1;
+    while (i < line.len) : (i += 1) {
+        if (line[i] == '*' or line[i] == '+') {
+            // Accounting for operator index + whitespace
+            return i - 2;
+        }
+    }
+
+    return line.len - 1;
 }
 
 test "part1" {
@@ -112,5 +204,5 @@ test "part2" {
 
     const result = try part2(std.testing.allocator, &reader.interface);
 
-    try std.testing.expectEqual(day.Answer{ .int = 0 }, result);
+    try std.testing.expectEqual(day.Answer{ .int = 3263827 }, result);
 }
