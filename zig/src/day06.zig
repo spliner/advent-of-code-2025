@@ -15,16 +15,17 @@ pub fn part1(allocator: std.mem.Allocator, reader: *std.Io.Reader) !day.Answer {
     defer line_writer.deinit();
 
     while (true) {
-        _ = reader.streamDelimiter(&line_writer.writer, '\n') catch |err| blk: switch (err) {
-            error.EndOfStream => {
-                break :blk;
-            },
-            else => {
-                return err;
-            },
+        const has_more = blk: {
+            _ = reader.streamDelimiter(&line_writer.writer, '\n') catch |err| switch (err) {
+                error.EndOfStream => break :blk false,
+                else => return err,
+            };
+            break :blk true;
         };
-
         const line = line_writer.written();
+        if (line.len == 0) {
+            break;
+        }
 
         var token_iterator = std.mem.tokenizeScalar(u8, line, ' ');
         if (line[0] == '*' or line[0] == '+') {
@@ -44,6 +45,10 @@ pub fn part1(allocator: std.mem.Allocator, reader: *std.Io.Reader) !day.Answer {
         try numbers.append(allocator, row);
 
         line_writer.clearRetainingCapacity();
+
+        if (!has_more) {
+            break;
+        }
 
         // Skip delimiter
         reader.toss(1);
